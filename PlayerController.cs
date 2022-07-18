@@ -57,8 +57,8 @@ public class PlayerController : MonoBehaviour
 			Left_Bullet.transform.position = Right_Bullet.transform.position = transform.position;
 			Left_Bullet.transform.Translate(L_B_Pos);
 			Right_Bullet.transform.Translate(R_B_Pos);
-	        Left_Bullet.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 2000);
-			Right_Bullet.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 2000);
+	        Left_Bullet.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
+			Right_Bullet.GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
 		}
 
 
