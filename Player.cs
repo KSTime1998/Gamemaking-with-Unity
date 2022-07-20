@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+  // 오브젝트 풀링
+  public GameObject[] Enemys;
+  public GameObject[] EnemyBosses;
+
   // 게임 관련 변수
   public float Gamespeed = 1f;
 
@@ -145,4 +149,53 @@ public class Player : MonoBehaviour
     }
   }
 
+  // 플레이어 조준탄 방향 지정 함수
+  public Vector2 Aming(Vector2 pos)
+  {
+
+    float distance = 1000;
+    Vector2 E = new Vector2(0,10);
+    Vector2 Epos;
+
+    for (int i = 0 ; i < EnemyBosses.Length ; i++)
+    {
+      if (EnemyBosses[i].gameObject.activeSelf)
+      {
+        Epos = EnemyBosses[i].gameObject.transform.position;
+        float d = Vector2.Distance(pos,Epos);
+        if (distance > d)
+        {
+          distance = d;
+          E = Epos;
+        }
+      }
+    }
+
+    if (distance != 1000)
+    {
+      return E;
+    }
+
+    else
+    {
+      for (int i = 0 ; i < Enemys.Length ; i++)
+      {
+        if (Enemys[i].gameObject.activeSelf)
+        {
+          Epos = Enemys[i].gameObject.transform.position;
+          float d = Vector2.Distance(pos,Epos);
+          if (distance > d)
+          {
+            distance = d;
+            E = Epos;
+          }
+        }
+      }
+      return E;
+    }
+
+  }
+
+
+  // 유도탄 함수
 }

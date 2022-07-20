@@ -5,6 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
 	public int Health = 1000;
+  //	public in Health;
 	
 	void Damaged(int value)
 	{
@@ -12,7 +13,7 @@ public class Enemy : MonoBehaviour
 
 		if (Health <= 0)
 		{
-			Destroy(this.gameObject);
+			this.gameObject.SetActive(false);
 		}
 	}
 	
