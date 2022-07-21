@@ -6,44 +6,49 @@ public class VIichan : Player
 {
 	public GameObject Weapon;
 	public GameObject BombWeapon;
-	GameObject[] VIichanBullet;
+	GameObject[] VIichanRBullet;
+	GameObject[] VIichanLBullet;
 	GameObject[] VIichanBomb;
 	// Enemys = GameObject.FindGameObjectsWithTag("Enemy");
 	// EnemyBosses = GameObject.FindGameObjectsWithTag("EnemyBoss");
 	//public Vector2 PrevieousPos;
 	//public Vector2 Translation;
-	float Cooltime = 0f;
+
+	// 탄 | 폭탄 스피드, 데미지, 기타 변수
+	byte Cooltime = 5;
+	byte BulletIndex;
+
 	short BombBulletNum;
 	float degree;
 
-	// 기본 공격 생성 위치
-	Vector2 L_B_Pos = new Vector2(-0.2f,0.1f);
-	Vector2 R_B_Pos = new Vector2(0.2f,0.1f);
-
-	// 탄 스피드 | 폭탄 스피드
-	public short BulletSpeed = 10;
-	public short BombSpeed = 100;
-
 	void Start()
 	{
-		//this.gameObject.SetActive(false);
-		//transform.position = new Vector2(0f , -5f);
+		transform.position = new Vector2(0f , -5f);
 		//PrevieousPos = transform.position;
 
-		// 이하 캐릭터별 스테이터스
+		// 캐릭터 스테이터스
 		Movespeed = 7f;
 		SlowMovespeed = 4f;
-		StartBomb = 3;
+		StartBomb = 2;
 		Life = 2;
 		Bomb = StartBomb;
+		Power = 0;
 
 		// 오브젝트 풀링
-		VIichanBullet = new GameObject[100];
+		VIichanRBullet = new GameObject[25];
+		VIichanLBullet = new GameObject[25];
 		VIichanBomb = new GameObject[100];
+		for (byte i = 0; i < 25 ; i++)
+		{
+			VIichanRBullet[i] = Instantiate(Weapon);
+			VIichanRBullet[i].transform.parent = transform;
+			VIichanRBullet[i].SetActive(false);
+			VIichanLBullet[i] = Instantiate(Weapon);
+			VIichanLBullet[i].transform.parent = transform;
+			VIichanLBullet[i].SetActive(false);
+		}
 		for (byte i = 0; i < 100 ; i++)
 		{
-			VIichanBullet[i] = Instantiate(Weapon);
-			VIichanBullet[i].SetActive(false);
 			VIichanBomb[i] = Instantiate(BombWeapon);
 			VIichanBomb[i].transform.parent = transform;
 			VIichanBomb[i].SetActive(false);
@@ -59,23 +64,28 @@ public class VIichan : Player
 		//PrevieousPos = transform.position;
 		this.gameObject.GetComponent<Player>().InvincibleEffect();
 		this.gameObject.GetComponent<Player>().Move();
+
 		// 공격 쿨타임
-		if (Cooltime > 0f)
+		if (Cooltime != 5)
 		{
-			Cooltime -= Time.deltaTime;
+			Cooltime++;
 		}
 
 		// 공격
-		if (Input.GetKey(KeyCode.Z) & Cooltime <= 0f)
+		else if (Input.GetKey(KeyCode.Z))
 		{
-			Cooltime = 0.1f / Gamespeed;
-			GameObject Left_Bullet = Instantiate(Weapon);
-			GameObject Right_Bullet = Instantiate(Weapon);
-			Left_Bullet.transform.position = Right_Bullet.transform.position = transform.position;
-			Left_Bullet.transform.Translate(L_B_Pos);
-			Right_Bullet.transform.Translate(R_B_Pos);
-			Left_Bullet.GetComponent<Rigidbody2D>().AddForce(Vector2.up * BulletSpeed * Gamespeed);
-			Right_Bullet.GetComponent<Rigidbody2D>().AddForce(Vector2.up * BulletSpeed * Gamespeed);
+			BulletIndex++;
+			if (BulletIndex == 25) {
+				BulletIndex = 0; }
+			Cooltime = 1;
+			VIichanRBullet[BulletIndex].transform.localPosition = new Vector2(0.3f,0.1f);
+			VIichanLBullet[BulletIndex].transform.localPosition = new Vector2(-0.3f,0.1f);
+			VIichanRBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 6 * (1 + Power/100);
+			VIichanLBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 6 * (1 + Power/100);
+			VIichanRBullet[BulletIndex].SetActive(true);
+			VIichanLBullet[BulletIndex].SetActive(true);
+			VIichanRBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
+			VIichanLBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
 		}
 
 		// 폭탄 사용
@@ -87,7 +97,7 @@ public class VIichan : Player
 			BombBulletNum = 200;
 		}
 
-		// 폭탄 발사 트리거
+		// 폭탄 발사 로직
 		// BombBulletNum은 200에서 시작하여 FixedUpdate 1회마다 1씩 줄어듬(0.02초마다 1 감소)
 		// 200 ~ 101틱까지 총 100개의 오브젝트 활성화. 활성화 직후 위치와 방향 지정
 		// 이후 100이 될 때까지 200 ~ BombBulletNum까지의 오브젝트들(101 ~ B는 아직 비활성화 상태라 건드리면 안됨)의 위치를 갱신
@@ -104,9 +114,9 @@ public class VIichan : Player
 			{
 				int index = BombBulletNum - 101;
 				VIichanBomb[index].GetComponent<PlayerBullet>().Damage = 0;
-				VIichanBomb[index].SetActive(true);
 				VIichanBomb[index].transform.localPosition = new Vector2(Mathf.Sin(BombBulletNum * Mathf.PI / 50) , Mathf.Cos(BombBulletNum * Mathf.PI / 50));
 				VIichanBomb[index].transform.rotation = Quaternion.Euler (new Vector3(0,0,-BombBulletNum * Mathf.PI / 50 * Mathf.Rad2Deg ));
+				VIichanBomb[index].SetActive(true);
 				for (int i = 200 ; i > BombBulletNum ; i--)
 				{
 					VIichanBomb[i - 101].transform.localPosition = new Vector2 (Mathf.Sin(i* Mathf.PI / 50) , Mathf.Cos(i * Mathf.PI / 50));
@@ -144,7 +154,7 @@ public class VIichan : Player
 					VIichanBomb[i].transform.rotation = Quaternion.Euler (new Vector3(0,0,degree));
 					if(i == BombBulletNum - 1)
 					{
-						VIichanBomb[BombBulletNum - 1].GetComponent<Rigidbody2D>().AddForce(direction_vector * BombSpeed * Gamespeed);
+						VIichanBomb[BombBulletNum - 1].GetComponent<Rigidbody2D>().AddForce(direction_vector * 2000);
 					}
 				}
 			}

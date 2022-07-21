@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-	public int Health = 1000;
-  //	public in Health;
+	public float Health = 1000f;
 	
-	void Damaged(int value)
+	void Damaged(float value)
 	{
 	    Health -= value;
 
@@ -28,5 +27,5 @@ public class Enemy : MonoBehaviour
 				coll.gameObject.SetActive(false);
 			}
 		}
-  }
+	}
 }

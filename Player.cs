@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-  // 오브젝트 풀링
+  // 이하 변수는 나중에 GameManager로 옮길 예정.
   public GameObject[] Enemys;
   public GameObject[] EnemyBosses;
-
-  // 게임 관련 변수
   public float Gamespeed = 1f;
 
   // 스테이터스 관련 변수
@@ -83,7 +81,7 @@ public class Player : MonoBehaviour
       coll.gameObject.SetActive(false);
     }
 
-    else if (coll.gameObject.CompareTag("Enemy") | coll.gameObject.CompareTag("EnemyBoss"))
+    else if ((coll.gameObject.CompareTag("Enemy") | coll.gameObject.CompareTag("EnemyBoss")) & this.gameObject.layer == 7)
     {
       Hit();
     }
