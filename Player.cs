@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
 		{
 			moveX -= 1f;
 		}
-    Vector2 speedvec = new Vector2(moveX,moveY) * 50f * Time.deltaTime * Gamespeed;
+    Vector2 speedvec = new Vector2(moveX,moveY);
 		  if (Input.GetKey(KeyCode.LeftShift))
 		{
 			GetComponent<Rigidbody2D>().velocity = speedvec * SlowMovespeed ;
