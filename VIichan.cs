@@ -27,8 +27,8 @@ public class VIichan : Player
 		//PrevieousPos = transform.position;
 
 		// 캐릭터 스테이터스
-		Movespeed = 7f;
-		SlowMovespeed = 4f;
+		Movespeed = 9f;
+		SlowMovespeed = 6f;
 		StartBomb = 2;
 		Life = 2;
 		Bomb = StartBomb;
@@ -75,13 +75,15 @@ public class VIichan : Player
 		else if (Input.GetKey(KeyCode.Z))
 		{
 			BulletIndex++;
-			if (BulletIndex == 25) {
-				BulletIndex = 0; }
+			if (BulletIndex == 25)
+			{
+				BulletIndex = 0;
+			}
 			Cooltime = 1;
 			VIichanRBullet[BulletIndex].transform.localPosition = new Vector2(0.3f,0.1f);
 			VIichanLBullet[BulletIndex].transform.localPosition = new Vector2(-0.3f,0.1f);
-			VIichanRBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 6 * (1 + Power/100);
-			VIichanLBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 6 * (1 + Power/100);
+			VIichanRBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 3 * (1 + Power/50);
+			VIichanLBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 3 * (1 + Power/50);
 			VIichanRBullet[BulletIndex].SetActive(true);
 			VIichanLBullet[BulletIndex].SetActive(true);
 			VIichanRBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
