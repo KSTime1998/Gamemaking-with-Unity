@@ -20,7 +20,7 @@ public class Gosegu : Player
 		GoseguBullet[BulletIndex].transform.localPosition = pos;
 		GoseguBullet[BulletIndex].SetActive(true);
 		GoseguBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 2 * (1 + Power/100);
-		GoseguBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(dir.normalized * 2000);
+		GoseguBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(dir.normalized * 1500);
 		BulletIndex++;
 		if (BulletIndex == 150)
 		{
@@ -67,7 +67,7 @@ public class Gosegu : Player
 			Cooltime++;
 		}
 
-		else if (Input.GetKey(KeyCode.Z))
+		else if (Input.GetKey(KeyCode.Z) & BombCooltime == 250)
 		{
 			Cooltime = 1;
 			Fire(new Vector2(0.15f,0.1f),new Vector2(0f,1f));
@@ -100,6 +100,7 @@ public class Gosegu : Player
 		{
 			BombCooltime = 0;
 			GoseguBomb.transform.position = new Vector2(0f,0.5f);
+			GoseguBomb.GetComponent<PlayerBullet>().Damage = 32 * (1 + Power/50);
 			GoseguBomb.SetActive(true);
 			this.gameObject.layer = 6;
 			Invincible = 5f;

@@ -117,7 +117,7 @@ public class INE : Player
 			}
 			INEBullet[BulletIndex].transform.localPosition = new Vector2(0f,0.2f);
 			INEBullet[BulletIndex].SetActive(true);
-			INEBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 15 * (1 + Power/50);
+			INEBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 30 * (1 + Power/100);
 			INEBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(Vector2.up * 750);
 			INEBullet[BulletIndex].GetComponent<Rigidbody2D>().AddTorque(750);
 		}
@@ -130,6 +130,8 @@ public class INE : Player
 			this.gameObject.layer = 6;
 			Invincible = 2f;
 			Bomb--;
+			INEBomb.gameObject.GetComponent<Collider2D>().enabled = false;
+			INEBomb.GetComponent<PlayerBullet>().Damage = 30 * (1 + Power/50);
 			INEBomb.SetActive(true);
 			INEBombEffect[0].transform.localPosition = new Vector2(0.1f,20f);
 			INEBombEffect[0].transform.rotation = Quaternion.Euler (new Vector3(0,0,30));
@@ -173,7 +175,8 @@ public class INE : Player
 			BombCooltime++;
 			INEBomb.transform.position -= new Vector3(0f,0.001f,0f);
 			if (BombCooltime == 100)
-			{	
+			{
+				INEBomb.gameObject.GetComponent<Collider2D>().enabled = true;
 				INEBomb.gameObject.SetActive(false);
 			}
 

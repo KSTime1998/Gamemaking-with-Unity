@@ -148,6 +148,8 @@ public class Player : MonoBehaviour
   }
 
   // 플레이어 조준탄 방향 지정 함수
+  // 사용할 때 밑 줄 붙여넣기 하면 편함.
+  // Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position)
   public Vector2 Aming(Vector2 pos)
   {
 

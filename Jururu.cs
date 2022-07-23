@@ -34,20 +34,19 @@ public class Jururu : Player
 
 		// 오브젝트 풀링
 		JururuBullet = new GameObject[100];
+		JururuBomb = new GameObject[10];
 		for (byte i = 0 ; i < 100 ; i++)
 		{
 			JururuBullet[i] = Instantiate(Weapon);
 			JururuBullet[i].transform.parent = transform;
 			JururuBullet[i].SetActive(false);
 		}
-    JururuBomb = new GameObject[10];
-    for (byte i = 0 ; i < 10 ; i++)
-    {
-		JururuBomb[i] = Instantiate(BombWeapon);
-		JururuBomb[i].SetActive(false);
-		JururuBomb[i].transform.parent = transform;
-		JururuBomb[i].transform.position = new Vector2 (0f,0f);
-    }
+		for (byte i = 0 ; i < 10 ; i++)
+		{
+			JururuBomb[i] = Instantiate(BombWeapon);
+			JururuBomb[i].transform.parent = transform;
+			JururuBomb[i].SetActive(false);
+		}
 
     // 캐릭터 스테이터스
     Movespeed = 9f;
@@ -73,24 +72,24 @@ public class Jururu : Player
 		else if (Input.GetKey(KeyCode.Z))
 		{
       Cooltime = 1;
-			Fire(new Vector2(0.5f,0.2f));
-			Fire(new Vector2(-0.5f,0.2f));
+			Fire(new Vector2(0.25f,0.2f));
+			Fire(new Vector2(-0.25f,0.2f));
 			if (Power > 49)
 			{
-				Fire(new Vector2(1f,0f));
-				Fire(new Vector2(-1f,0f));
+				Fire(new Vector2(0.75f,0.15f));
+				Fire(new Vector2(-0.75f,0.15f));
 				if (Power > 99)
 				{
-					Fire(new Vector2(2f,-0.6f));
-					Fire(new Vector2(-2f,-0.6f));
+					Fire(new Vector2(1.25f,0.1f));
+					Fire(new Vector2(-1.25f,0.1f));
 					if (Power > 149)
 					{
-						Fire(new Vector2(3f,-0.6f));
-						Fire(new Vector2(-3f,-0.6f));
+						Fire(new Vector2(1.75f,0.05f));
+						Fire(new Vector2(-1.75f,0.05f));
 						if (Power == 200)
 						{
-							Fire(new Vector2(4f,-0.6f));
-							Fire(new Vector2(-4f,-0.6f));
+							Fire(new Vector2(2.25f,0f));
+							Fire(new Vector2(-2.25f,0f));
 						}
 					}
 				}
@@ -102,12 +101,46 @@ public class Jururu : Player
 		{
 			BombCooltime = 0;
 			this.gameObject.layer = 6;
-			Invincible = 5f;
+			Invincible = 3f;
 			Bomb--;
 		}
 
     if (BombCooltime < 150)
     {
+			if(BombCooltime >= 50)
+			{
+				if (BombCooltime % 10 == 0)
+				{
+					Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position);
+					if (Epos == new Vector2(0,10))
+					{
+						Epos = new Vector2(Random.Range(-9.0f,9.0f),Random.Range(-6.0f,14.0f));
+					}
+					else
+					{
+						Vector2 Rpos = new Vector2(Random.Range(-0.5f,0.5f),Random.Range(-0.5f,0.5f));
+						Epos += Rpos;
+						if (Epos.x < -9)
+						{ Epos.x = -9; }
+						if (Epos.x > 9)
+						{ Epos.x = 9; }
+						if (Epos.y < -6)
+						{ Epos.y = -6; }
+						if (Epos.y > 14)
+						{ Epos.y = 14; }
+					}
+					JururuBomb[(BombCooltime-50) / 10].transform.position = Epos;
+					JururuBomb[(BombCooltime-50) / 10].GetComponent<PlayerBullet>().Damage = 60 * (1 + Power/50);
+					JururuBomb[(BombCooltime-50) / 10].SetActive(true);
+					JururuBomb[(BombCooltime-50) / 10].gameObject.GetComponent<Collider2D>().enabled = true;
+				}
+					else if (BombCooltime % 10 == 5)
+				{
+					JururuBomb[(BombCooltime-50) / 10].gameObject.GetComponent<Collider2D>().enabled = false;
+					JururuBomb[(BombCooltime-50) / 10].SetActive(false);
+				}
+			}
+			BombCooltime++;
     }
   }
 }
