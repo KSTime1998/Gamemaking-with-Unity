@@ -33,8 +33,8 @@ public class Gosegu : Player
 		transform.position = new Vector2(0f,-5f);
 
 		// 캐릭터 스테이터스
-		Movespeed = 10f;
-		SlowMovespeed = 7f;
+		Movespeed = 11f;
+		SlowMovespeed = 6.5f;
 		StartBomb = 2;
 		Life = 2;
 		Bomb = StartBomb;

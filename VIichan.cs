@@ -39,7 +39,7 @@ public class VIichan : Player
 		//PrevieousPos = transform.position;
 
 		// 캐릭터 스테이터스
-		Movespeed = 9f;
+		Movespeed = 10f;
 		SlowMovespeed = 6f;
 		StartBomb = 2;
 		Life = 2;
@@ -54,6 +54,9 @@ public class VIichan : Player
 			VIichanBullet[i] = Instantiate(Weapon);
 			VIichanBullet[i].transform.parent = transform;
 			VIichanBullet[i].SetActive(false);
+		}
+		for (byte i = 0; i < 100 ; i++)
+		{
 			VIichanBomb[i] = Instantiate(BombWeapon);
 			VIichanBomb[i].transform.parent = transform;
 			VIichanBomb[i].SetActive(false);
@@ -93,7 +96,6 @@ public class VIichan : Player
 					Fire(new Vector2(-1f,-0.3f),3);
 				}
 			}
-
 		}
 
 		// 폭탄 사용
@@ -150,7 +152,7 @@ public class VIichan : Player
 					VIichanBomb[i].transform.localPosition = new Vector2 (Mathf.Sin((i + 101) * Mathf.PI / 50) , Mathf.Cos((i + 101) * Mathf.PI / 50));
 				}
 				VIichanBomb[BombBulletNum - 1].SetActive(false);
-				VIichanBomb[BombBulletNum - 1].GetComponent<PlayerBullet>().Damage = 10 * (1 + Power/50);
+				VIichanBomb[BombBulletNum - 1].GetComponent<PlayerBullet>().Damage = 20 * (1 + Power/50);
 				VIichanBomb[BombBulletNum - 1].SetActive(true);
 
 				Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position);

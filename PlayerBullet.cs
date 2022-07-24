@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class PlayerBullet : MonoBehaviour
 {
-    public float Damage;
-    public bool isPenetrate;
-    public bool isLazer;
-
+  public float Damage;
+  public bool isPenetrate;
+  public bool isLazer;
 }

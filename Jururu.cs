@@ -49,7 +49,7 @@ public class Jururu : Player
 		}
 
     // 캐릭터 스테이터스
-    Movespeed = 9f;
+    Movespeed = 10f;
     SlowMovespeed = 6f;
     StartBomb = 2;
     Life = 2;
@@ -69,7 +69,7 @@ public class Jururu : Player
 			Cooltime++;
 		}
 
-		else if (Input.GetKey(KeyCode.Z))
+		else if (Input.GetKey(KeyCode.Z) & BombCooltime == 150)
 		{
       Cooltime = 1;
 			Fire(new Vector2(0.25f,0.2f));

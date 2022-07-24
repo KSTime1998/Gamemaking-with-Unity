@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
   public byte Bomb = 0;
   public byte Power = 0;
   public int Donation = 0;
+  public sbyte Barrior = 0;
 
   // 이동 함수
   public void Move()
@@ -55,17 +56,35 @@ public class Player : MonoBehaviour
   // 피격 시 스테이터스 변경 함수(라이프 감소 및 무적시간 부여)
   void Hit()
   {
-    Invincible = 3;
     this.gameObject.layer = 6;
 
-    if (Life == 0)
+    if (Barrior > 0)
     {
-      //Game over
+      Invincible = 1;
+
+      if (Barrior == 2)
+      {
+        Barrior = -2;
+      }
+      else
+      {
+        Barrior = -1;
+      }
     }
+
     else
     {
-      Life--;
-      Bomb = StartBomb;
+      Invincible = 3;
+
+      if (Life == 0)
+      {
+        //Game over
+      }
+      else
+      {
+        Life--;
+        Bomb = StartBomb;
+      }
     }
   }
 

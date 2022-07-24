@@ -118,7 +118,7 @@ public class INE : Player
 			INEBullet[BulletIndex].transform.localPosition = new Vector2(0f,0.2f);
 			INEBullet[BulletIndex].SetActive(true);
 			INEBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = 30 * (1 + Power/100);
-			INEBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(Vector2.up * 750);
+			INEBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
 			INEBullet[BulletIndex].GetComponent<Rigidbody2D>().AddTorque(750);
 		}
 
