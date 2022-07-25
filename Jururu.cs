@@ -112,7 +112,7 @@ public class Jururu : Player
 				if (BombCooltime % 10 == 0)
 				{
 					Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position);
-					if (Epos == new Vector2(0,10))
+					if (Epos == new Vector2(0,20))
 					{
 						Epos = new Vector2(Random.Range(-9.0f,9.0f),Random.Range(-6.0f,14.0f));
 					}

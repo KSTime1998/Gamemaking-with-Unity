@@ -8,15 +8,17 @@ public class VIichan : Player
 	public GameObject BombWeapon;
 	GameObject[] VIichanBullet;
 	GameObject[] VIichanBomb;
-	// Enemys = GameObject.FindGameObjectsWithTag("Enemy");
-	// EnemyBosses = GameObject.FindGameObjectsWithTag("EnemyBoss");
-	//public Vector2 PrevieousPos;
-	//public Vector2 Translation;
+
+	// 스테이터스
+	// float Default_Movespeed = 10f;
+	// float Default_SlowMovespeed = 6f;
+	// byte Default_StartBomb = 2;
+	// byte Start_Life = 2;
+
 
 	// 탄 | 폭탄 스피드, 데미지, 기타 변수
 	byte Cooltime = 5;
 	byte BulletIndex;
-
 	short BombBulletNum = 0;
 	float degree;
 
@@ -24,7 +26,10 @@ public class VIichan : Player
 	{
 		VIichanBullet[BulletIndex].transform.localPosition = pos;
 		VIichanBullet[BulletIndex].SetActive(true);
-		VIichanBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = D * (1 + Power/50);
+		if (Chanburger & Power == 200)
+		{ VIichanBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = D * (1 + Power/50) * 2/9; }
+		else
+		{ VIichanBullet[BulletIndex].GetComponent<PlayerBullet>().Damage = D * (1 + Power/50); }
 		VIichanBullet[BulletIndex].GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
 		BulletIndex++;
 		if (BulletIndex == 100)
@@ -83,13 +88,13 @@ public class VIichan : Player
 		else if (Input.GetKey(KeyCode.Z))
 		{
 			Cooltime = 1;
-			Fire(new Vector2(-0.3f,0.1f),3);
-			Fire(new Vector2(0.3f,0.1f),3);
-			Fire(new Vector2(0f,0.3f),1);
+			Fire(new Vector2(-0.3f,0.1f),2);
+			Fire(new Vector2(0.3f,0.1f),2);
+			Fire(new Vector2(0f,0.3f),3);
 			if(Power >= 100)
 			{
-				Fire(new Vector2(0.65f,-0.1f),3);
-				Fire(new Vector2(-0.65f,-0.1f),3);
+				Fire(new Vector2(0.65f,-0.1f),2);
+				Fire(new Vector2(-0.65f,-0.1f),2);
 				if(Power == 200)
 				{
 					Fire(new Vector2(1f,-0.3f),3);
@@ -123,9 +128,10 @@ public class VIichan : Player
 			if (BombBulletNum > 100)
 			{
 				int index = BombBulletNum - 101;
+				degree = BombBulletNum * Mathf.PI / 50;
 				VIichanBomb[index].GetComponent<PlayerBullet>().Damage = 0;
-				VIichanBomb[index].transform.localPosition = new Vector2(Mathf.Sin(BombBulletNum * Mathf.PI / 50) , Mathf.Cos(BombBulletNum * Mathf.PI / 50));
-				VIichanBomb[index].transform.rotation = Quaternion.Euler (new Vector3(0,0,-BombBulletNum * Mathf.PI / 50 * Mathf.Rad2Deg ));
+				VIichanBomb[index].transform.localPosition = new Vector2(Mathf.Sin(degree) , Mathf.Cos(degree));
+				VIichanBomb[index].transform.rotation = Quaternion.Euler (new Vector3(0,0,-degree * Mathf.Rad2Deg ));
 				VIichanBomb[index].SetActive(true);
 				for (int i = 200 ; i > BombBulletNum ; i--)
 				{
@@ -136,6 +142,8 @@ public class VIichan : Player
 			if (BombBulletNum < 151 & BombBulletNum > 100)
 			{
 				Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position);
+				if (Epos == new Vector2(0f,20f))
+				{ Epos = new Vector2(0f,10f); }
 				for (int i = BombBulletNum - 51 ; i < 100 ; i++)
 				{
 					Vector2 Bpos = VIichanBomb[i].transform.position;
@@ -156,6 +164,8 @@ public class VIichan : Player
 				VIichanBomb[BombBulletNum - 1].SetActive(true);
 
 				Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position);
+				if (Epos == new Vector2(0f,20f))
+				{ Epos = new Vector2(0f,10f); }
 				for (int i = Mathf.Max(0, BombBulletNum - 50); i < BombBulletNum ; i++)
 				{
 					Vector2 Bpos = VIichanBomb[i].transform.position;

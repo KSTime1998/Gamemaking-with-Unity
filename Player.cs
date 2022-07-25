@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-  // 이하 변수는 나중에 GameManager로 옮길 예정.
+  // 이하 변수는 나중에 ObjectManager에서 관리할 예정.
+  public ObjectManager objectmanager;
+  public GameManager gamemanager;
+
   public GameObject[] Enemys;
   public GameObject[] EnemyBosses;
   public float Gamespeed = 1f;
@@ -20,6 +23,10 @@ public class Player : MonoBehaviour
   public byte Power = 0;
   public int Donation = 0;
   public sbyte Barrior = 0;
+
+  // 시너지 관련 함수 (총 21개)
+  public bool Chanburger = false;
+  public byte Main_Vocals = 0;
 
   // 이동 함수
   public void Move()
@@ -42,7 +49,7 @@ public class Player : MonoBehaviour
 		{
 			moveX -= 1f;
 		}
-    Vector2 speedvec = new Vector2(moveX,moveY);
+    Vector2 speedvec = new Vector2(moveX,moveY).normalized;
 		  if (Input.GetKey(KeyCode.LeftShift))
 		{
 			GetComponent<Rigidbody2D>().velocity = speedvec * SlowMovespeed ;
@@ -112,9 +119,9 @@ public class Player : MonoBehaviour
       {
         case "Life":
           if (Life < 10)
-          {
-            Life++;
-          }
+          { Life++; }
+          else
+          { Donation += 1000000;}
           break;
         case "Paper":
           Donation += 10000;
@@ -123,16 +130,16 @@ public class Player : MonoBehaviour
           Donation += 100;
           break;
         case "Power":
-          if (Power < 200)
-          {
-            Power++;
-          }
+          if (Power < 200 + Main_Vocals)
+          { Power++; }
+          else
+          { Donation += 10; }
           break;
         case "Bomb":
           if (Bomb < 10)
-          {
-            Bomb++;
-          }
+          { Bomb++; }
+          else
+          { Donation += 100000; }
           break;
       }
 
@@ -173,7 +180,7 @@ public class Player : MonoBehaviour
   {
 
     float distance = 1000;
-    Vector2 E = new Vector2(0,10);
+    Vector2 E = new Vector2(0,20);
     Vector2 Epos;
 
     for (int i = 0 ; i < EnemyBosses.Length ; i++)
@@ -215,6 +222,10 @@ public class Player : MonoBehaviour
 
   }
 
+  void FixedUpdate()
+  {
+    gamemanager.Player_Pos = transform.position;
+  }
 
   // 유도탄 함수
 }
