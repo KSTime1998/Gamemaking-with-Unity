@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ObjectManager : MonoBehaviour
 {
+  public static ObjectManager Instance;
 
   // 프리팹
   public GameObject Item_Power_Prefab;
-  public GameObject Item_Paper_Prefab;
+  public GameObject Item_Money_Prefab;
   public GameObject Item_Coin_Prefab;
   public GameObject Item_Life_Prefab;
   public GameObject Item_Bomb_Prefab;
@@ -27,130 +28,186 @@ public class ObjectManager : MonoBehaviour
   public GameObject LargeSph_Prefab;
   public GameObject Star_Prefab;
 
-  // 실질적인 오브젝트 배열(큐에 저장)
-  //// GameObejct[] ~ ;
-  public Queue Item_Power = new Queue();
-  public Queue Item_Paper = new Queue();
-  public Queue Item_Coin = new Queue();
-  public Queue Item_Life = new Queue();
-  public Queue Item_Bomb = new Queue();
+  // 실질적인 오브젝트 배열(큐)
+  public Queue<GameObject> Item_Power = new Queue<GameObject>();
+  public Queue<GameObject> Item_Money = new Queue<GameObject>();
+  public Queue<GameObject> Item_Coin = new Queue<GameObject>();
+  public Queue<GameObject> Item_Life = new Queue<GameObject>();
+  public Queue<GameObject> Item_Bomb = new Queue<GameObject>();
 
-  public Queue Ameba = new Queue();
-  public Queue Mite = new Queue();
-  public Queue ChickenPigeon = new Queue();
-  public Queue WakParrot = new Queue();
-  public Queue Chimpanchee = new Queue();
-  public Queue Neugeuza = new Queue();
-  public Queue Boss = new Queue();
+  public Queue<GameObject> Point = new Queue<GameObject>();
+  public Queue<GameObject> SmallSph = new Queue<GameObject>();
+  public Queue<GameObject> Bullet = new Queue<GameObject>();
+  public Queue<GameObject> MediumSph = new Queue<GameObject>();
+  public Queue<GameObject> LargeSph = new Queue<GameObject>();
+  public Queue<GameObject> Star = new Queue<GameObject>();
 
-  public Queue Point = new Queue();
-  public Queue SamllSph = new Queue();
-  public Queue Bullet = new Queue();
-  public Queue MediumSph = new Queue();
-  public Queue LargeSph = new Queue();
-  public Queue Star = new Queue();
+  public GameObject[] Ameba = new GameObject[100];
+  public GameObject[] Mite = new GameObject[100];
+  public GameObject[] ChickenPigeon = new GameObject[50];
+  public GameObject[] WakParrot = new GameObject[50];
+  public GameObject[] Chimpanchee = new GameObject[10];
+  public GameObject[] Neugeuza = new GameObject[10];
+  public GameObject[] Boss = new GameObject[20];
 
-  void ObjectPooling(GameObject type)
+  // 오브젝트 풀링을 위한 Enqueue 메소드
+  void ObjectPooling(GameObject PrefabName, Queue<GameObject> QueueName)
   {
-    GameObject newObj = Instantiate(type);
+    GameObject newObj = Instantiate(PrefabName);
+    QueueName.Enqueue(newObj);
     newObj.SetActive(false);
-    Item_Power.Enqueue(newObj);
   }
 
-  // 함수 간략화를 위한 타겟 변수
-  GameObject[] target;
 
+  // 비활성화 메서드(Enqueue)
+  public void Off(GameObject target)
+  {
+    target.GetComponent<Rigidbody2D>().velocity = new Vector3(0f,0f,0f);
+    target.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
+    target.SetActive(false);
+
+    if (target.CompareTag("Item"))
+    {
+      string TYPE = target.GetComponent<Item>().type;
+      switch (TYPE)
+      {
+        case "Life":
+          Item_Life.Enqueue(target);
+          break;
+        case "Money":
+          Item_Money.Enqueue(target);
+          break;
+        case "Coin":
+          Item_Coin.Enqueue(target);
+          break;
+        case "Power":
+          Item_Power.Enqueue(target);
+          break;
+        case "Bomb":
+          Item_Bomb.Enqueue(target);
+          break;
+      }
+    }
+
+    else if (target.CompareTag("EnemyBullet"))
+    {
+    }
+  }
+
+  // 비활성화된 Enemy 개체를 찾아 반환
+  public GameObject Search(string target)
+  {
+    GameObject[] type = Ameba;
+    int length = 0;
+    switch (target)
+    {
+    case "Ameba":
+      type = Ameba;
+      length = 100;
+      break;
+    case "Mite":
+      type = Mite;
+      length = 100;
+      break;
+    case "ChickenPigeon":
+      type = ChickenPigeon;
+      length = 50;
+      break;
+    case "WakParrot":
+      type = WakParrot;
+      length = 50;
+      break;
+    case "Chimpanchee":
+      type = Chimpanchee;
+      length = 10;
+      break;
+    case "Neugeuza":
+      type = Neugeuza;
+      length = 10;
+      break;
+    }
+    for (int i = 0 ; i < length ; i++)
+    {
+      if (!type[i].activeSelf)
+      { return type[i]; }
+    }
+    return null;
+  }
+
+  // 큐에서 아이템/적 탄환을 Dequeue하고 반환
+  public GameObject Make(string type)
+  {
+    switch (type)
+    {
+      case "Power":
+        return Item_Power.Dequeue();
+      case "Money":
+        return Item_Money.Dequeue();
+      case "Coin":
+        return Item_Coin.Dequeue();
+      case "Life":
+        return Item_Life.Dequeue();
+      case "Bomb":
+        return Item_Bomb.Dequeue();
+
+      case "Point":
+        return Point.Dequeue();
+      case "Bullet":
+        return Bullet.Dequeue();
+      case "SmallSph":
+        return SmallSph.Dequeue();
+      case "MediumSph":
+        return MediumSph.Dequeue();
+      case "LargeSph":
+        return LargeSph.Dequeue();
+      case "Star":
+        return Star.Dequeue();
+      default :
+        return null;
+    }
+  }
 
   // 오브젝트 풀링
   void Start()
   {
-    //// ~ = new GameObject[~];
+    ObjectManager.Instance = this;
+
+    for (int i = 0 ; i < 10 ; i++)
+    {
+      ObjectPooling(Item_Life_Prefab,Item_Life);
+      ObjectPooling(Item_Bomb_Prefab,Item_Bomb);
+      Chimpanchee[i] = Instantiate(Chimpanchee_Prefab);
+      Chimpanchee[i].SetActive(false);
+      Neugeuza[i] = Instantiate(Neugeuza_Prefab);
+      Neugeuza[i].SetActive(false);
+    }
+
+    for (int i = 0 ; i < 50 ; i++)
+    {
+      ChickenPigeon[i] = Instantiate(ChickenPigeon_Prefab);
+      ChickenPigeon[i].SetActive(false);
+      WakParrot[i] = Instantiate(WakParrot_Prefab);
+      WakParrot[i].SetActive(false);
+    }
+
+    for (int i = 0 ; i < 100 ; i++)
+    {
+      ObjectPooling(Item_Power_Prefab,Item_Power);
+      ObjectPooling(Item_Money_Prefab,Item_Money);
+      ObjectPooling(Item_Coin_Prefab,Item_Coin);
+      Ameba[i] = Instantiate(Ameba_Prefab);
+      Ameba[i].SetActive(false);
+      Mite[i] = Instantiate(Mite_Prefab);
+      Mite[i].SetActive(false);
+    }
     for (int i = 0 ; i < 500 ; i++)
     {
-      if (i < 10)
-      {
-        ObjectPooling(Item_Life_Prefab);
-        ObjectPooling(Item_Bomb_Prefab);
-
-        ObjectPooling(Neugeuza_Prefab);
-      }
-
-      if (i < 20)
-      {
-        ObjectPooling(Boss_Prefab);
-      }
-
-      if (i < 100)
-      {
-        ObjectPooling(Item_Power_Prefab);
-        ObjectPooling(Item_Paper_Prefab);
-        ObjectPooling(Item_Coin_Prefab);
-
-        ObjectPooling(Ameba_Prefab);
-        ObjectPooling(Mite_Prefab);
-        ObjectPooling(ChickenPigeon_Prefab);
-        ObjectPooling(WakParrot_Prefab);
-        ObjectPooling(Chimpanchee_Prefab);
-      }
-
-      ObjectPooling(Point_Prefab);
-      ObjectPooling(SmallSph_Prefab);
-      ObjectPooling(Bullet_Prefab);
-      ObjectPooling(MediumSph_Prefab);
-      ObjectPooling(LargeSph_Prefab);
-      ObjectPooling(Star_Prefab);
+      ObjectPooling(Point_Prefab,Point);
+      ObjectPooling(SmallSph_Prefab,SmallSph);
+      ObjectPooling(Bullet_Prefab,Bullet);
+      ObjectPooling(MediumSph_Prefab,MediumSph);
+      ObjectPooling(LargeSph_Prefab,LargeSph);
+      ObjectPooling(Star_Prefab,Star);
     }
   }
-
-
-
-  // Enqueue
-  // private Bullet CreateNewObject()
-  // {
-  //   var NEW = Instantiate(poolingObjectPrefab).GetComponent<Bullet>();
-  //   NEW.gameObject.SetActive(false);
-  //   NEW.transform.SetParent(transform);
-  //   return NEW;
-  // }
-
-  // Dequeue
-
-
-
-  // 아이템 생성 함수
-  // public void Make_Item(Vector2 pos, string type)
-  // {
-  //   target = null;
-  //   switch (type)
-  //   {
-  //     case "Power":
-  //       target = Item_Power;
-  //       break;
-  //     case "Paper":
-  //       target = Item_Paper;
-  //       break;
-  //     case "Coin":
-  //       target = Item_Coin;
-  //       break;
-  //     case "Life":
-  //       target = Item_Life;
-  //       break;
-  //     case "Bomb":
-  //       target = Item_Bomb;
-  //       break;
-  //   }
-    // target.GetComponent<Rigidbody2D>().velocity = new Vector3(0f,0f,0f);
-    // target.transform.position = pos;
-    // target.SetActive(true);
-    // target.GetComponent<Rigidbody2D>().AddForce(Vector2.down * 250f);
-  // }
-
-  public void Spawn()
-  {
-  }
-
-  public void EnemyFire()
-  {
-  }
-
 }

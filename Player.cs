@@ -4,13 +4,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-  // 이하 변수는 나중에 ObjectManager에서 관리할 예정.
   public ObjectManager objectmanager;
   public GameManager gamemanager;
-
-  public GameObject[] Enemys;
-  public GameObject[] EnemyBosses;
-  public float Gamespeed = 1f;
+  public static Player Instance;
 
   // 스테이터스 관련 변수
   public float Movespeed;
@@ -24,6 +20,11 @@ public class Player : MonoBehaviour
   public int Donation = 0;
   public sbyte Barrior = 0;
 
+  // 조준탄 관련 함수
+  public Vector2 PlayerPos;
+  public float Distance;
+  public Vector2 EnemyPos;
+
   // 시너지 관련 함수 (총 21개)
   public bool Chanburger = false;
   public byte Main_Vocals = 0;
@@ -34,30 +35,19 @@ public class Player : MonoBehaviour
 		float moveX = 0f;
 		float moveY = 0f;
 		  if (Input.GetKey(KeyCode.UpArrow))
-		{
-			moveY += 1f;
-		}
+        moveY += 1f;
 		  if (Input.GetKey(KeyCode.DownArrow))
-		{
-			moveY -= 1f;
-		}
+			  moveY -= 1f;
 		  if (Input.GetKey(KeyCode.RightArrow))
-		{
-			moveX += 1f;
-		}
+			  moveX += 1f;
 		  if (Input.GetKey(KeyCode.LeftArrow))
-		{
-			moveX -= 1f;
-		}
+			  moveX -= 1f;
+
     Vector2 speedvec = new Vector2(moveX,moveY).normalized;
 		  if (Input.GetKey(KeyCode.LeftShift))
-		{
-			GetComponent<Rigidbody2D>().velocity = speedvec * SlowMovespeed ;
-		}
+		{ GetComponent<Rigidbody2D>().velocity = speedvec * SlowMovespeed ; }
 		else
-		{
-			GetComponent<Rigidbody2D>().velocity = speedvec * Movespeed ;
-		}
+		{ GetComponent<Rigidbody2D>().velocity = speedvec * Movespeed ; }
 	}
 
   // 피격 시 스테이터스 변경 함수(라이프 감소 및 무적시간 부여)
@@ -68,30 +58,21 @@ public class Player : MonoBehaviour
     if (Barrior > 0)
     {
       Invincible = 1;
-
       if (Barrior == 2)
-      {
-        Barrior = -2;
-      }
+      { Barrior = -2; }
       else
-      {
-        Barrior = -1;
-      }
+      { Barrior = -1; }
     }
 
     else
-    {
-      Invincible = 3;
-
+    { Invincible = 3;
       if (Life == 0)
       {
         //Game over
       }
       else
-      {
-        Life--;
-        Bomb = StartBomb;
-      }
+      { Life--;
+        Bomb = StartBomb; }
     }
   }
 
@@ -101,16 +82,12 @@ public class Player : MonoBehaviour
     if (coll.gameObject.CompareTag("EnemyBullet"))
     {
       if (this.gameObject.layer == 7)
-      {
-        Hit();
-      }
-      coll.gameObject.SetActive(false);
+      { Hit(); }
+      ObjectManager.Instance.Off(coll.gameObject);
     }
 
     else if ((coll.gameObject.CompareTag("Enemy") | coll.gameObject.CompareTag("EnemyBoss")) & this.gameObject.layer == 7)
-    {
-      Hit();
-    }
+    { Hit(); }
 
     else if (coll.gameObject.CompareTag("Item"))
     {
@@ -123,7 +100,7 @@ public class Player : MonoBehaviour
           else
           { Donation += 1000000;}
           break;
-        case "Paper":
+        case "Money":
           Donation += 10000;
           break;
         case "Coin":
@@ -143,7 +120,7 @@ public class Player : MonoBehaviour
           break;
       }
 
-      coll.gameObject.SetActive(false);
+      ObjectManager.Instance.Off(coll.gameObject);
     }
   }
 
@@ -162,7 +139,7 @@ public class Player : MonoBehaviour
   {
     if (Invincible > 0f)
     {
-      Invincible -= Time.deltaTime * Gamespeed;
+      Invincible -= Time.deltaTime;
       Twinkling(Invincible);
       if (Invincible <= 0f)
       {
@@ -173,59 +150,48 @@ public class Player : MonoBehaviour
     }
   }
 
-  // 플레이어 조준탄 방향 지정 함수
-  // 사용할 때 밑 줄 붙여넣기 하면 편함.
-  // Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position)
-  public Vector2 Aming(Vector2 pos)
+  void Awake()
   {
+    Player.Instance = this;
+  }
 
-    float distance = 1000;
-    Vector2 E = new Vector2(0,20);
-    Vector2 Epos;
-
-    for (int i = 0 ; i < EnemyBosses.Length ; i++)
+  // 조준 함수
+  void Judge(GameObject[] Type, int length)
+  {
+    for (byte i = 0 ; i < length ; i++)
     {
-      if (EnemyBosses[i].gameObject.activeSelf)
+      var target = Type[i];
+      if (target.activeSelf)
       {
-        Epos = EnemyBosses[i].gameObject.transform.position;
-        float d = Vector2.Distance(pos,Epos);
-        if (distance > d)
+        Vector2 Epos = target.transform.position; 
+        float D = (Epos - PlayerPos).magnitude;
+        if (D < Distance)
         {
-          distance = d;
-          E = Epos;
+          Distance = D;
+          EnemyPos = target.transform.position;
         }
       }
     }
+  }
 
-    if (distance != 1000)
-    {
-      return E;
-    }
-
+  public Vector2 CloseEnemy()
+  {
+    PlayerPos = transform.position;
+    float Distance = 100f;
+    EnemyPos = Vector2.up * 20f;
+    Judge(ObjectManager.Instance.Boss,10);
+    if (Distance != 100f)
+    { return EnemyPos; }
     else
     {
-      for (int i = 0 ; i < Enemys.Length ; i++)
-      {
-        if (Enemys[i].gameObject.activeSelf)
-        {
-          Epos = Enemys[i].gameObject.transform.position;
-          float d = Vector2.Distance(pos,Epos);
-          if (distance > d)
-          {
-            distance = d;
-            E = Epos;
-          }
-        }
-      }
-      return E;
+      Judge(ObjectManager.Instance.Ameba,100);
+      Judge(ObjectManager.Instance.Mite,100);
+      Judge(ObjectManager.Instance.ChickenPigeon,50);
+      Judge(ObjectManager.Instance.WakParrot,50);
+      Judge(ObjectManager.Instance.Chimpanchee,10);
+      Judge(ObjectManager.Instance.Neugeuza,10);
     }
-
+    return EnemyPos;
   }
 
-  void FixedUpdate()
-  {
-    gamemanager.Player_Pos = transform.position;
-  }
-
-  // 유도탄 함수
 }

@@ -20,6 +20,7 @@ public class VIichan : Player
 	byte Cooltime = 5;
 	byte BulletIndex;
 	short BombBulletNum = 0;
+	Vector2 direction_vector;
 	float degree;
 
 	void Fire(Vector2 pos, float D)
@@ -72,9 +73,6 @@ public class VIichan : Player
 
 	void FixedUpdate()
 	{
-		//Vector2 CurrentPos = transform.position;
-		//Translation = CurrentPos - PrevieousPos;
-		//PrevieousPos = transform.position;
 		this.gameObject.GetComponent<Player>().InvincibleEffect();
 		this.gameObject.GetComponent<Player>().Move();
 
@@ -141,13 +139,14 @@ public class VIichan : Player
 
 			if (BombBulletNum < 151 & BombBulletNum > 100)
 			{
-				Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position);
-				if (Epos == new Vector2(0f,20f))
-				{ Epos = new Vector2(0f,10f); }
+				Vector2 Epos = Player.Instance.CloseEnemy();
 				for (int i = BombBulletNum - 51 ; i < 100 ; i++)
 				{
 					Vector2 Bpos = VIichanBomb[i].transform.position;
-					Vector2 direction_vector = (Epos - Bpos).normalized;
+					if (Epos == new Vector2(0f,20f))
+					{ direction_vector = Vector2.up; }
+					else
+					{ direction_vector = (Epos - Bpos).normalized; }
 					degree = -Mathf.Atan(direction_vector.x / direction_vector.y) * Mathf.Rad2Deg;
 					VIichanBomb[i].transform.rotation = Quaternion.Euler (new Vector3(0,0,degree));
 				}
@@ -163,13 +162,14 @@ public class VIichan : Player
 				VIichanBomb[BombBulletNum - 1].GetComponent<PlayerBullet>().Damage = 20 * (1 + Power/50);
 				VIichanBomb[BombBulletNum - 1].SetActive(true);
 
-				Vector2 Epos = this.gameObject.GetComponent<Player>().Aming(transform.position);
-				if (Epos == new Vector2(0f,20f))
-				{ Epos = new Vector2(0f,10f); }
+				Vector2 Epos = Player.Instance.CloseEnemy();
 				for (int i = Mathf.Max(0, BombBulletNum - 50); i < BombBulletNum ; i++)
 				{
 					Vector2 Bpos = VIichanBomb[i].transform.position;
-					Vector2 direction_vector = (Epos - Bpos).normalized;
+					if (Epos == new Vector2(0f,20f))
+					{ direction_vector = Vector2.up; }
+					else
+					{ direction_vector = (Epos - Bpos).normalized; }
 					degree = -Mathf.Atan(direction_vector.x / direction_vector.y) * Mathf.Rad2Deg;
 					VIichanBomb[i].transform.rotation = Quaternion.Euler (new Vector3(0,0,degree));
 					if(i == BombBulletNum - 1)

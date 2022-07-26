@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : GameManager
+public class Enemy : MonoBehaviour
 {
-	public GameObject player;
+	public ObjectManager objectmanager;
+	public GameManager gamemanager;
 	Color C;
 	public float Health;
 	public float Twinkling_Time = 0;
+	public string type;
+	public int EnemyIndex;
 
 	void Start()
 	{
@@ -46,12 +49,6 @@ public class Enemy : GameManager
 				coll.gameObject.SetActive(false);
 			}
 		}
-	}
-
-	public Vector3 Aming()
-	{
-		Vector3 dir = (this.gameObject.GetComponent<GameManager>().Player_Pos - transform.position).normalized;
-		return dir;
 	}
 
 	void FixedUpdate()
