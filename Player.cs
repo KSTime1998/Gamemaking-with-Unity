@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
   public byte StartBomb;
   public float Invincible;
 
+  public int SubShotType;
   public byte Life = 0;
   public byte Bomb = 0;
   public byte Power = 0;
@@ -107,8 +108,17 @@ public class Player : MonoBehaviour
           Donation += 100;
           break;
         case "Power":
-          if (Power < 200 + Main_Vocals)
-          { Power++; }
+          if (Power < 200 + Main_Vocals) {
+            Power++;
+            if (Power == 50)
+            {}
+            else if (Power == 100)
+            {}
+            else if (Power == 150)
+            {}
+            else if (Power == 200)
+            {}
+          }
           else
           { Donation += 10; }
           break;

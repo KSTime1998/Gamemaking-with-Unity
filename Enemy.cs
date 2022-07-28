@@ -10,26 +10,6 @@ public class Enemy : MonoBehaviour
 	public float Health;
 	public float Twinkling_Time = 0;
 	public string type;
-	public int EnemyIndex;
-
-	void Start()
-	{
-		C =  gameObject.GetComponent<SpriteRenderer>().color;
-	}
-
-	void Damaged(float value)
-	{
-	  Health -= value;
-		if (Health <= 0)
-		{
-			this.gameObject.SetActive(false);
-		}
-		if (Twinkling_Time == 0 & value != 0)
-		{
-			Twinkling_Time = 5;
-			Twinkling();
-		}
-	}
 
   void Twinkling()
   {
@@ -49,6 +29,42 @@ public class Enemy : MonoBehaviour
 				coll.gameObject.SetActive(false);
 			}
 		}
+	}
+
+	void Damaged(float value)
+	{
+	  Health -= value;
+		if (Health <= 0)
+		{
+			this.gameObject.SetActive(false);
+		}
+		if (Twinkling_Time == 0 & value != 0)
+		{
+			Twinkling_Time = 5;
+			Twinkling();
+		}
+	}
+
+	Vector2 Target()
+	{
+		return (Player.Instance.transform.position - transform.position).normalized;
+	}
+
+	void TargetingFire(string type, int way, float degree, float speed)
+	{
+	}
+
+	void RandomFire(string type, float speed)
+	{
+	}
+
+	void FixedFire(string type, int way, float degree, float speed, float dir)
+	{
+	}
+
+	void Start()
+	{
+		C =  gameObject.GetComponent<SpriteRenderer>().color;
 	}
 
 	void FixedUpdate()

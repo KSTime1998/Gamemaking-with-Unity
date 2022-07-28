@@ -13,6 +13,13 @@ public class ObjectManager : MonoBehaviour
   public GameObject Item_Life_Prefab;
   public GameObject Item_Bomb_Prefab;
 
+  public GameObject Point_Prefab;
+  public GameObject SmallSph_Prefab;
+  public GameObject Bullet_Prefab;
+  public GameObject MediumSph_Prefab;
+  public GameObject LargeSph_Prefab;
+  public GameObject Star_Prefab;
+
   public GameObject Ameba_Prefab;
   public GameObject Mite_Prefab;
   public GameObject ChickenPigeon_Prefab;
@@ -21,12 +28,12 @@ public class ObjectManager : MonoBehaviour
   public GameObject Neugeuza_Prefab;
   public GameObject Boss_Prefab;
 
-  public GameObject Point_Prefab;
-  public GameObject SmallSph_Prefab;
-  public GameObject Bullet_Prefab;
-  public GameObject MediumSph_Prefab;
-  public GameObject LargeSph_Prefab;
-  public GameObject Star_Prefab;
+  public GameObject Bidulgi_Prefab;
+  public GameObject Poop_Prefab;
+  public GameObject Bat_Prefab;
+  public GameObject Fox_Prefab;
+  public GameObject Bacteria_Prefab;
+  public GameObject Waterdeer_Prefab;
 
   // 실질적인 오브젝트 배열(큐)
   public Queue<GameObject> Item_Power = new Queue<GameObject>();
@@ -49,6 +56,13 @@ public class ObjectManager : MonoBehaviour
   public GameObject[] Chimpanchee = new GameObject[10];
   public GameObject[] Neugeuza = new GameObject[10];
   public GameObject[] Boss = new GameObject[20];
+
+  public GameObject[] Bidulgi = new GameObject[500];
+  public GameObject[] Poop = new GameObject[100];
+  public GameObject[] Bat = new GameObject[100];
+  public GameObject Fox;
+  public GameObject[] Bacteria = new GameObject[200];
+  public GameObject[] Waterdeer = new GameObject[60];
 
   // 오브젝트 풀링을 위한 Enqueue 메소드
   void ObjectPooling(GameObject PrefabName, Queue<GameObject> QueueName)
@@ -95,7 +109,7 @@ public class ObjectManager : MonoBehaviour
   }
 
   // 비활성화된 Enemy 개체를 찾아 반환
-  public GameObject Search(string target)
+  public GameObject MakeEnemy(string target)
   {
     GameObject[] type = Ameba;
     int length = 0;
@@ -135,7 +149,7 @@ public class ObjectManager : MonoBehaviour
   }
 
   // 큐에서 아이템/적 탄환을 Dequeue하고 반환
-  public GameObject Make(string type)
+  public GameObject MakeObj(string type)
   {
     switch (type)
     {
